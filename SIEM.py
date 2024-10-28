@@ -26,6 +26,71 @@ def get_windows_login_observation(body):
     # Si no coincide con ninguno de los patrones
     return "No se pudo extraer información del inicio de sesión"
 
+def get_linux_login_observation(body):
+    pattern = r'Notificacion SIEM - Login sin usuario OPR o PS en Linux.*?Usuario: (.*?) Equipo: (.*?) Ip: (\d+\.\d+\.\d+\.\d+)'
+    
+    match = re.search(pattern, body, re.DOTALL)
+    if match:
+        user = match.group(1).strip()
+        equipo = match.group(2).strip()
+        ip = match.group(3).strip()
+        return f"Login en Linux que no utiliza usuario OPR o PS. Usuario: {user} Equipo: {equipo} IP: {ip}"
+    
+    # Si no coincide el patrón
+    return "No se pudo extraer información del login en Linux"
+
+import re
+
+def get_sudo_su_observation(body):
+    # Explicación del patrón:
+    # - 'usuario: (.*?)' --> Captura cualquier usuario que sigue a la palabra 'usuario: '
+    # - 'Cambio a: root' --> Esto es constante, no necesitamos capturarlo
+    # - 'Host: (.*?)' --> Captura cualquier valor que sigue a 'Host: ' y se detiene en el espacio
+    # - 'Ip: (\d+\.\d+\.\d+\.\d+)' --> Captura la dirección IP (formato de 4 bloques de números separados por puntos)
+    
+    pattern = r'usuario: (.*?) Cambio a: root Host: (.*?) Ip: (\d+\.\d+\.\d+\.\d+)'
+    
+    # Realizamos la búsqueda en el cuerpo
+    match = re.search(pattern, body, re.DOTALL)
+    
+    # Si encontramos una coincidencia, extraemos los valores
+    if match:
+        user = match.group(1).strip()  # Captura del usuario
+        host = match.group(2).strip()  # Captura del host
+        ip = match.group(3).strip()    # Captura de la IP
+        print(f"user: {user}, host: {host}, ip: {ip}")
+        # Devolvemos la observación formateada
+        return f"Se ha detectado la acción sudo su a root. Usuario: {user} Host: {host} Ip: {ip}"
+    
+    # Si no hay coincidencia, devolvemos un mensaje por defecto
+    return "No se pudo extraer información del sudo su"
+
+
+def get_login_fuera_de_puentes_observation(body):
+    # Primer patrón para "Login fuera de puentes"
+    pattern_1 = r'Login fuera de puentes.*?Fecha/hora:.*?Usuario de origen: (.*?) IP de Origen: (\d+\.\d+\.\d+\.\d+) Host de Destino: (.*?) IPAM:'
+    
+    match_1 = re.search(pattern_1, body, re.DOTALL)
+    if match_1:
+        user = match_1.group(1).strip()
+        ip_origen = match_1.group(2).strip()
+        host_destino = match_1.group(3).strip()
+        return f"Se ha detectado un Login fuera de puentes. Usuario: {user} IP de Origen: {ip_origen} Host de Destino: {host_destino} IPAM"
+    
+    # Segundo patrón para "Login sin usuario OPR o PS en Linux"
+    pattern_2 = r'login en los sistemas linux.*?Usuario: (.*?) Equipo: (.*?) Ip: (\d+\.\d+\.\d+\.\d+)'
+    
+    match_2 = re.search(pattern_2, body, re.DOTALL)
+    if match_2:
+        user = match_2.group(1).strip()
+        equipo = match_2.group(2).strip()
+        ip = match_2.group(3).strip()
+        return f"Se ha detectado un login en sistemas Linux que no utiliza el usuario OPR o PS. Usuario: {user} Equipo: {equipo} IP: {ip}"
+    
+    # Si ninguno de los patrones coincide
+    return "No se pudo extraer información del login fuera de puentes"
+
+
 # --- Código de normalización de logs ---
 def normalize_body(body):
     patterns = [
@@ -84,8 +149,6 @@ def is_critical_alarm(alarm):
     ]
     return alarm in critical_alarms
 
-
-# --- Función principal ---
 def process_alarms(input_file, bd_file):
     # Leer y normalizar la base de datos
     df_bd = normalize_database(bd_file)
@@ -102,12 +165,26 @@ def process_alarms(input_file, bd_file):
         alarma = row['Alarma']
         cuerpo = row['Cuerpo']
         
-        # Si la alarma es de Windows Login, extraemos la información directamente
+        # Caso 1: Windows Login
         if alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión":
             observacion = get_windows_login_observation(cuerpo)
-            if observacion is None:
-                observacion = "Caso por defecto - Añadir manualmente"
-            is_bold = True  # Podrías ajustar según necesites
+            is_bold = True if observacion else False
+        
+        # Caso 2: Login sin usuario OPR o PS en Linux
+        elif alarma == "Notificacion SIEM - Notificacion SIEM - Login sin usuario OPR o PS en Linux":
+            observacion = get_login_fuera_de_puentes_observation(cuerpo)
+            is_bold = True if observacion else False
+        
+        # Caso 3: Login fuera de puentes
+        elif alarma == "Notificacion SIEM - Login fuera de puentes":
+            observacion = get_login_fuera_de_puentes_observation(cuerpo)
+            is_bold = True if observacion else False
+
+        # Caso 4: sudo su detectado
+        elif alarma == "Notificacion SIEM - Sudo su detectado":
+            observacion = get_sudo_su_observation(cuerpo)
+            is_bold = True if observacion else False
+
         else:
             # Normalizar el cuerpo del log para matchear con la base de datos
             cuerpo_normalizado = normalize_body(cuerpo)
@@ -142,6 +219,9 @@ def process_alarms(input_file, bd_file):
     workbook.save(output_file)
     
     print(f"Procesamiento completado. Resultado guardado en {output_file}")
+
+
+
     
     # Opcional: eliminar el archivo de entrada original
     # os.remove(input_file)
