@@ -143,25 +143,8 @@ def process_alarm(log):
 
 # --- Ejemplo de log para probar ---
 log = """
-Workapp - Login desde 2 IPs diferentes    
-Fecha/hora: 2024/10/15 08:07:08 Usuario: sosaro IP de origen: 181.94.208.201 
-Geolocalizacion de origen: Asuncion, Asuncion, Paraguay, 1119 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.94.208.201 ---  
-Fecha/hora: 2024/10/15 13:22:33 Usuario: sosaro IP de origen: 181.91.87.152 
-Geolocalizacion de origen: Formosa, Formosa, Argentina, P3600 JIE Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.91.87.152 ---
-"""
-log2 = """
-Workapp - Login desde 2 IPs diferentes    
-Fecha/hora: 2024/10/15 12:36:10 Usuario: u996467 IP de origen: 190.104.176.241 
-Geolocalizacion de origen: San Estanislao, San Pedro, Paraguay, 8210 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=190.104.176.241 ---  
-Fecha/hora: 2024/10/15 09:06:04 Usuario: u996467 IP de origen: 181.94.250.37 
-Geolocalizacion de origen: Asuncion, Asuncion, Paraguay, 1119 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.94.250.37 ---
-"""
-log3 = """s
-Workapp - Login desde 2 IPs diferentes    
-Fecha/hora: 2024/10/15 12:21:32 Usuario: u997390 IP de origen: 190.104.177.62 
-Geolocalizacion de origen: Encarnacion, Itapua, Paraguay, 6000 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=190.104.177.62 ---  
-Fecha/hora: 2024/10/15 11:55:44 Usuario: u997390 IP de origen: 181.94.231.35 
-Geolocalizacion de origen: Asuncion, Asuncion, Paraguay, 1119 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.94.231.35 ---
+Workapp - Login desde 2 IPs diferentes    Fecha/hora: 2024/10/28 09:55:59 Usuario: u995955 IP de origen: 181.91.84.141 Geolocalizacion de origen: Formosa, Formosa, Argentina, P3600 JIE Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.91.84.141 ---  Fecha/hora: 2024/10/28 15:09:39 Usuario: u995955 IP de origen: 181.94.243.217 Geolocalizacion de origen: Asuncion, Asuncion, Paraguay, 1119 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.94.243.217 ---
 """
 
-result = process_alarm(log2)
+
+result = process_alarm(log)
