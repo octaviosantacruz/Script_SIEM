@@ -7,6 +7,7 @@ import os
 
 # --- Función para obtener observaciones específicas de logs de Windows ---
 def get_windows_login_observation(body):
+    # Falta el Equipo (13/11)
     # Patrones para inglés y español
     patterns = [
         # Patrón para logs en inglés
@@ -21,7 +22,7 @@ def get_windows_login_observation(body):
             ip = match.group(1).strip()
             user = match.group(2).strip()
             source_ip = match.group(3).strip()
-            return f"Se ha detectado un inicio de sesión en el equipo {ip} User: {user} Dirección de origen: {source_ip}"
+            return f"Equipo: {ip} User: {user} Dirección de origen: {source_ip}"
     
     # Si no coincide con ninguno de los patrones
     return "No se pudo extraer información del inicio de sesión"
@@ -34,7 +35,7 @@ def get_linux_login_observation(body):
         user = match.group(1).strip()
         equipo = match.group(2).strip()
         ip = match.group(3).strip()
-        return f"Login en Linux que no utiliza usuario OPR o PS. Usuario: {user} Equipo: {equipo} IP: {ip}"
+        return f"Usuario: {user} Equipo: {equipo} IP: {ip}"
     
     # Si no coincide el patrón
     return "No se pudo extraer información del login en Linux"
@@ -60,7 +61,7 @@ def get_sudo_su_observation(body):
         ip = match.group(3).strip()    # Captura de la IP
         print(f"user: {user}, host: {host}, ip: {ip}")
         # Devolvemos la observación formateada
-        return f"Se ha detectado la acción sudo su a root. Usuario: {user} Host: {host} Ip: {ip}"
+        return f"Usuario: {user} Host: {host} Ip: {ip}"
     
     # Si no hay coincidencia, devolvemos un mensaje por defecto
     return "No se pudo extraer información del sudo su"
@@ -75,7 +76,7 @@ def get_login_fuera_de_puentes_observation(body):
         user = match_1.group(1).strip()
         ip_origen = match_1.group(2).strip()
         host_destino = match_1.group(3).strip()
-        return f"Se ha detectado un Login fuera de puentes. Usuario: {user} IP de Origen: {ip_origen} Host de Destino: {host_destino} IPAM"
+        return f"Usuario: {user} IP de Origen: {ip_origen} Host de Destino: {host_destino} IPAM"
     
     # Segundo patrón para "Login sin usuario OPR o PS en Linux"
     pattern_2 = r'login en los sistemas linux.*?Usuario: (.*?) Equipo: (.*?) Ip: (\d+\.\d+\.\d+\.\d+)'
@@ -85,7 +86,7 @@ def get_login_fuera_de_puentes_observation(body):
         user = match_2.group(1).strip()
         equipo = match_2.group(2).strip()
         ip = match_2.group(3).strip()
-        return f"Se ha detectado un login en sistemas Linux que no utiliza el usuario OPR o PS. Usuario: {user} Equipo: {equipo} IP: {ip}"
+        return f"Usuario: {user} Equipo: {equipo} IP: {ip}"
     
     # Si ninguno de los patrones coincide
     return "No se pudo extraer información del login fuera de puentes"
@@ -109,7 +110,7 @@ def normalize_body(body):
                     ip = match.group(1).strip()
                     host = match.group(2).strip()
                     user = match.group(3).strip()
-                    return f"Se ha detectado un inicio de sesión en el equipo {ip} Host: {host} User: {user}"
+                    return f"Equipo {ip} Host: {host} User: {user}"
             else:
                 normalized = re.sub(pattern, '', body, flags=re.DOTALL)
                 return normalized.strip()
