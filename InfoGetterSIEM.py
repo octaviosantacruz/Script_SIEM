@@ -13,7 +13,7 @@ load_dotenv()
 
 # Configuración de la URL
 BASE_URL = os.getenv('URL_LINK')
-
+print(f"URL base utilizada: {BASE_URL}")
 # Regex para extraer posición y departamento hasta un "/" o "_"
 POSITION_DEPARTMENT_REGEX = r"^(?P<position>.+?) - (?P<department>.+?)(?:[/_].*)?$"
 
@@ -30,10 +30,11 @@ def fetch_user_info(user_id, info_type):
         str: Valor de la información obtenida (o None si falla).
     """
     timestamp = datetime.now().timestamp()
-    url = f"{BASE_URL}?user={user_id}&info={info_type}&ts={timestamp}"  # Agrega timestamp a la URL
+    url = f"{BASE_URL}?user={user_id}&info={info_type}"
     try:
-        response = requests.get(url, verify=False, headers={"Cache-Control": "no-cache"})  # Desactivar caché
+        response = requests.get(url, verify=False, headers={"Cache-Control": "no-cache"})  # Desactivar cach
         response.raise_for_status()  # Lanza excepción si el código no es 200
+        
         response.encoding = 'utf-8'
         data = response.json()
 
