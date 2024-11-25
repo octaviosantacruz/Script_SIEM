@@ -120,7 +120,7 @@ def process_alarm(log):
 
 # --- Ejemplo de log para probar ---
 log = """
-Workapp - Login desde 2 IPs diferentes    Fecha/hora: 2024/11/19 06:51:58 Usuario: u994827 IP de origen: 181.94.231.129 Geolocalizacion de origen: Asuncion, Asuncion, Paraguay, 1119 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=181.94.231.129 ---  Fecha/hora: 2024/11/19 09:31:54 Usuario: u994827 IP de origen: 190.104.176.17 Geolocalizacion de origen: Chaco-i, Presidente Hayes, Paraguay, 9680 Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=190.104.176.17 ---
+Workapp - Login desde 2 IPs diferentes    Fecha/hora: 2024/11/22 10:01:22 Usuario: n36108073 IP de origen: 190.220.156.190 Geolocalizacion de origen: Cordoba, Cordoba, Argentina, X5000 AHA Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=190.220.156.190 ---  Fecha/hora: 2024/11/22 08:44:12 Usuario: n36108073 IP de origen: 200.68.98.157 Geolocalizacion de origen: Cordoba, Cordoba, Argentina, X5000 AHB Reputacion de IP (Cisco Talos): https://talosintelligence.com/reputation_center/lookup?search=200.68.98.157 ---
 """
 
 # Ejecutar la función de prueba
