@@ -4,6 +4,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 from datetime import datetime
 import os
+from InfoGetterSIEM import get_user_details
 
 # --- Función para obtener observaciones específicas de logs de Windows ---
 def get_windows_login_observation(body):
@@ -21,8 +22,11 @@ def get_windows_login_observation(body):
         if match:
             ip = match.group(1).strip()
             user = match.group(2).strip()
+            # Remove _opr at the end of the user
+            user_replace_admin = user.replace("_admin", "")
+            user_details = get_user_details(user_replace_admin)
             source_ip = match.group(3).strip()
-            return f"Equipo: {ip} User: {user} Dirección de origen: {source_ip}"
+            return f"Equipo: {ip} User: {user_details} Dirección de origen: {source_ip}"
     
     # Si no coincide con ninguno de los patrones
     return "No se pudo extraer información del inicio de sesión"
@@ -35,7 +39,8 @@ def get_linux_login_observation(body):
         user = match.group(1).strip()
         equipo = match.group(2).strip()
         ip = match.group(3).strip()
-        return f"Usuario: {user} Equipo: {equipo} IP: {ip}"
+        user_details = get_user_details(user)
+        return f"Usuario: {user_details} Equipo: {equipo} IP: {ip}"
     
     # Si no coincide el patrón
     return "No se pudo extraer información del login en Linux"
