@@ -20,7 +20,7 @@ BASE_URL = os.getenv('URL_LINK')
 
 # Regex para extraer posición y departamento hasta un "/" o "_"
 POSITION_DEPARTMENT_REGEX = r"^(?P<position>.+?) - (?P<department>.+?)(?:[/_].*)?$"
-
+POSITION_DEPARTMENT_OLD = r"^(?P<position>.+?) - (?P<department>.+)$"
 # Función para hacer la solicitud y obtener información
 def fetch_user_info(user_id, info_type):
     """
