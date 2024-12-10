@@ -161,3 +161,5 @@ cython_debug/
 *.xlsx
 IP2Location.py
 WhatMyIP.py
+WhatMyIP.py
+IP2Location.py
