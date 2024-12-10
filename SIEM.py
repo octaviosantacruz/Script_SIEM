@@ -3,8 +3,8 @@ import re
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 from datetime import datetime
-import os
-
+# Importar funciones desde ip2location.py
+from IP2Location import (get_ip2location_info,calculate_time_difference,approximate_distance,is_impossible_travel,process_alarm)
 # --- Función para obtener observaciones específicas de logs de Windows ---
 def get_windows_login_observation(body):
     # Falta el Equipo (13/11)
@@ -40,7 +40,7 @@ def get_linux_login_observation(body):
     # Si no coincide el patrón
     return "No se pudo extraer información del login en Linux"
 
-import re
+
 
 def get_sudo_su_observation(body):
     # Explicación del patrón:
@@ -59,7 +59,6 @@ def get_sudo_su_observation(body):
         user = match.group(1).strip()  # Captura del usuario
         host = match.group(2).strip()  # Captura del host
         ip = match.group(3).strip()    # Captura de la IP
-        print(f"user: {user}, host: {host}, ip: {ip}")
         # Devolvemos la observación formateada
         return f"Usuario: {user} Host: {host} Ip: {ip}"
     
@@ -91,6 +90,24 @@ def get_login_fuera_de_puentes_observation(body):
     # Si ninguno de los patrones coincide
     return "No se pudo extraer información del login fuera de puentes"
 
+def get_linux_scan_observation(body):
+    try:
+        # Dividir el texto en líneas y buscar "IP de Origen"
+        lines = body.split()
+        for i, word in enumerate(lines):
+            if word == "Origen:":
+                ip_origen = lines[i + 1]  # Obtener la IP que sigue a "IP de Origen:"
+                
+                # Verificar si la IP coincide con la específica
+                if ip_origen == "10.150.49.89":
+                    return "Escaneo de puertos detectado en Linux. Origen: Password Safe."
+        
+        # Si no se encuentra coincidencia, devolver None
+        return None
+    except Exception as e:
+        # Manejo de errores
+        print(f"Error al analizar el cuerpo del log: {e}")
+        return None
 
 # --- Código de normalización de logs ---
 def normalize_body(body):
@@ -185,6 +202,18 @@ def process_alarms(input_file, bd_file):
         elif alarma == "Notificacion SIEM - Sudo su detectado":
             observacion = get_sudo_su_observation(cuerpo)
             is_bold = True if observacion else False
+        # Casos de IP2Location
+        elif alarma in [
+            "Notificacion SIEM - VPN - Login desde 2 IPs diferentes"
+            "Notificacion SIEM - Workapp - Login desde 2 IPs diferentes",
+            "Notificacion SIEM - Workapp - Login fuera de ARG y PY",
+            "Notificacion SIEM - VPN fuera de ARG o PY."
+        ]:
+            observacion = process_alarm(cuerpo)
+            is_bold = True if observacion else False
+        elif alarma == "Notificacion SIEM - Linux - Posible escaneo de puertos_local":
+            observacion = get_linux_scan_observation(cuerpo)
+            is_bold = True if observacion else False
 
         else:
             # Normalizar el cuerpo del log para matchear con la base de datos
@@ -224,9 +253,6 @@ def process_alarms(input_file, bd_file):
 
 
     
-    # Opcional: eliminar el archivo de entrada original
-    # os.remove(input_file)
-    # print(f"Archivo original {input_file} eliminado.")
 
 # Uso del script
 input_file = "7-11.xlsx"
