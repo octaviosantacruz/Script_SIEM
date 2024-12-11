@@ -162,7 +162,7 @@ def apply_styles(workbook, sheet_name, row_index, col_index, is_critical=False, 
 # --- Función para detectar alarmas críticas ---
 def is_critical_alarm(alarm):
     critical_alarms = [
-        "Notificacion SIEM - Workapp - Login desde 2 IPs diferentes"
+        "Notificacion SIEM - SIEM - Posible escaneo mediante VPN"
         # Añadir más alarmas críticas aquí
     ]
     return alarm in critical_alarms
@@ -204,7 +204,7 @@ def process_alarms(input_file, bd_file):
             is_bold = True if observacion else False
         # Casos de IP2Location
         elif alarma in [
-            "Notificacion SIEM - VPN - Login desde 2 IPs diferentes"
+            "Notificacion SIEM - VPN - Login desde 2 IPs diferentes",
             "Notificacion SIEM - Workapp - Login desde 2 IPs diferentes",
             "Notificacion SIEM - Workapp - Login fuera de ARG y PY",
             "Notificacion SIEM - VPN fuera de ARG o PY."
