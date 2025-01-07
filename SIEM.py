@@ -4,7 +4,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 from datetime import datetime
 import os
-from InfoGetterSIEM import get_user_details
+from siem_processor.apis.InfoGetterSIEM import get_user_details
 
 # --- Función para obtener observaciones específicas de logs de Windows ---
 def get_windows_login_observation(body):
