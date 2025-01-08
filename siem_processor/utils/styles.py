@@ -9,5 +9,5 @@ def apply_styles(sheet, row_index, is_critical=False, is_bold=False):
         cell.font = Font(bold=True)
 
 def is_critical_alarm(alarm):
-    critical_alarms = ["Notificacion SIEM - SIEM - Posible escaneo mediante VPN"]
+    critical_alarms = ["Notificacion SIEM - SIEM - Posible escaneo mediante VPN", "Notificacion SIEM - Linux - Posible escaneo de puertos_local"]
     return alarm in critical_alarms
