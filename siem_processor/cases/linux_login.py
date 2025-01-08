@@ -15,18 +15,23 @@ def handle_linux_login(alarma, cuerpo):
         observacion = get_login_fuera_de_puentes_observation(cuerpo)
         is_bold = True if observacion else False
         return observacion, is_bold
-
+    
     if alarma == "Notificacion SIEM - Sudo su detectado":
         observacion = get_sudo_su_observation(cuerpo)
         is_bold = True if observacion else False
         return observacion, is_bold
-    
-    if alarma == "Notificacion SIEM - Login sin usuario OPR o PS en Linux":
+
+    if alarma == "Notificacion SIEM - Notificacion SIEM - Login sin usuario OPR o PS en Linux":
         observacion = get_login_sin_usuario_opr_o_ps_observation(cuerpo)
         is_bold = True if observacion else False
         return observacion, is_bold
 
-    return "Caso no clasificado - Añadir manualmente", False
+    if alarma == "Notificacion SIEM - Notificacion - SIEM cambios audit":
+        observacion = get_cambios_audit_observation(cuerpo)
+        is_bold = True if observacion else False
+        return observacion, is_bold
+
+    return "Caso no clasificado en ninguna alarma en Linux - Añadir manualmente", False
 
 
 def get_login_fuera_de_puentes_observation(cuerpo):
@@ -69,9 +74,10 @@ def get_sudo_su_observation(cuerpo):
         user = match.group(1).strip()
         host = match.group(2).strip()
         ip = match.group(3).strip()
-        return f"Usuario: {user}, Host: {host}, IP: {ip}"
+        return f"Sudo su detectado - Usuario: {user}, Host: {host}, IP: {ip}"
 
-    return "No se pudo extraer información del sudo su"
+    return "No se pudo extraer información del log Sudo su detectado"
+
 
 def get_login_sin_usuario_opr_o_ps_observation(cuerpo):
     """
@@ -83,14 +89,34 @@ def get_login_sin_usuario_opr_o_ps_observation(cuerpo):
     Returns:
         str: Observación extraída o un mensaje de error.
     """
-    # Patrón para extraer Usuario, Equipo y IP
-    pattern = r'Se ha detectado un login en los sistemas linux.*?Usuario: (.*?) Equipo: (.*?) Ip: (\d+\.\d+\.\d+\.\d+)'
+    pattern = r'Usuario: (.*?) Equipo: (.*?) Ip: (\d+\.\d+\.\d+\.\d+)'
     match = re.search(pattern, cuerpo, re.DOTALL)
 
     if match:
         user = match.group(1).strip()
         equipo = match.group(2).strip()
         ip = match.group(3).strip()
-        return f"Usuario: {user}, Equipo: {equipo}, IP: {ip}"
+        return f"Login sin usuario OPR/PS - Usuario: {user}, Equipo: {equipo}, IP: {ip}"
 
-    return "No se pudo extraer información del login sin usuario OPR o PS en Linux"
+    return "No se pudo extraer información del log Login sin usuario OPR o PS en Linux"
+
+
+def get_cambios_audit_observation(cuerpo):
+    """
+    Extrae información de los logs "Cambios audit detectados".
+
+    Args:
+        cuerpo (str): El cuerpo del log.
+
+    Returns:
+        str: Observación extraída o un mensaje de error.
+    """
+    pattern = r'Tipo de cambio: (.*?) Equipo: (.*?) Accion Usuario:'
+    match = re.search(pattern, cuerpo, re.DOTALL)
+
+    if match:
+        tipo_cambio = match.group(1).strip()
+        equipo = match.group(2).strip()
+        return f"Cambio audit detectado - Tipo de cambio: {tipo_cambio}, Equipo: {equipo}"
+
+    return "No se pudo extraer información del log Cambios audit detectados"
