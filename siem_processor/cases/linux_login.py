@@ -34,7 +34,8 @@ def get_login_fuera_de_puentes_observation(cuerpo):
     Returns:
         str: Observación extraída o un mensaje de error.
     """
-    pattern = r'Login fuera de puentes.*?Usuario de origen: (.*?) IP de Origen: (\d+\.\d+\.\d+\.\d+) Host de Destino: (.*?)'
+    # Ajustamos el patrón para capturar el host de destino correctamente
+    pattern = r'Login fuera de puentes.*?Usuario de origen: (.*?) IP de Origen: (\d+\.\d+\.\d+\.\d+).*?Host de Destino: (.*?) IPAM:'
     match = re.search(pattern, cuerpo, re.DOTALL)
 
     if match:
