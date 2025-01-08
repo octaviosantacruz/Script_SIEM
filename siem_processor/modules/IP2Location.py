@@ -154,7 +154,7 @@ def process_vpn_outside_permitted_countries(log):
     if detected_country == log_country:
         return f"Se verifica que el usuario reside en {detected_country}."
     else:
-        return f"Alerta: Inconsistencia detectada. El log indica {log_country}, pero la IP pertenece a {detected_country}. IP: {ip}."
+        return f"Falso Positivo. El log indica {log_country}, pero la IP pertenece es de {detected_country}."
 
 # --- Función para procesar login fuera de ARG y PY ---
 def process_login_outside_permitted_countries(log):
