@@ -3,9 +3,12 @@ normalization.py| The script contains a function to normalize the database of SI
 """
 import pandas as pd
 import re
-
+import os
 def normalize_database(input_file):
-    df = pd.read_excel(input_file, sheet_name='BD_Logs')
+     # Verifica si el archivo existe
+    if not os.path.exists(input_file):
+        raise FileNotFoundError(f"El archivo no existe: {os.path.abspath(input_file)}")
+    df = pd.read_excel(input_file, sheet_name='BD')
     df['Cuerpo Normalizado'] = df['Cuerpo'].apply(normalize_body)
     return df
 
