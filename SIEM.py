@@ -3,8 +3,7 @@ import re
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 from datetime import datetime
-# Importar funciones desde ip2location.py
-from IP2Location import (get_ip2location_info,calculate_time_difference,approximate_distance,is_impossible_travel,process_alarm)
+from IP2Location import (process_alarm)
 # --- Función para obtener observaciones específicas de logs de Windows ---
 def get_windows_login_observation(body):
     # Falta el Equipo (13/11)
