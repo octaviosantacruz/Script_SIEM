@@ -11,7 +11,7 @@ def handle_general_case(alarma, cuerpo):
     Returns:
         tuple: Observación (str) y si el texto debe estar en negrita (bool).
     """
-    observacion = "Caso no clasificado - Añadir manualmente"
+    observacion = "Caso no clasificado en ninguna alarma - Añadir manualmente"
     is_bold = False
 
     # Implementar lógica específica para alarmas generales si es necesario
