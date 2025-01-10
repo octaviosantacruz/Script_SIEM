@@ -47,6 +47,7 @@ def process_alarms(input_file,bd_file):
             "Notificacion SIEM - Notificacion - SIEM cambios audit"
         ]:
             observacion, is_bold = handle_linux_login(alarma, cuerpo)
+            is_bold = True if "Alerta" in observacion else False
         elif alarma in [
             "Notificacion SIEM - VPN - Login desde 2 IPs diferentes",
             "Notificacion SIEM - Workapp - Login desde 2 IPs diferentes",
