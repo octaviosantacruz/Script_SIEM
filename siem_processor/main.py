@@ -37,7 +37,11 @@ def process_alarms(input_file,bd_file):
         cuerpo = row['Cuerpo']
 
         # Procesar casos basados en el tipo de alarma
-        if alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión":
+        if alarma in [
+            "Notificacion SIEM - Se ha detectado un inicio de sesión", 
+            "Notificacion SIEM - Se ha detectado un inicio de sesión en los DC",
+            "Notificacion SIEM - Se ha detectado un inicio de sesión sin opr o admin"
+         ]:
             observacion, is_bold = handle_windows_login(alarma, cuerpo)
             is_bold = True if "Alerta" in observacion else False
         elif alarma in [
