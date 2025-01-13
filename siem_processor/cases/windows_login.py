@@ -16,6 +16,12 @@ def handle_windows_login(alarma, cuerpo):
         if observacion == "No se pudo extraer información del inicio de sesión":
             observacion = get_variant_windows_login_observation(cuerpo)
         is_bold = True if observacion else False
+    elif alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión en los DC":
+        observacion = get_windows_dc_login_observation(cuerpo)
+        is_bold = True if observacion else False
+    elif alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión sin opr o admin":
+        observacion = get_windows_user_login_observation(cuerpo)
+        is_bold = True if observacion else False
         return observacion, is_bold
 
     return "Caso no clasificado - Añadir manualmente", False
@@ -65,3 +71,48 @@ def get_windows_login_observation(cuerpo):
             return f"Equipo: {ip}, User: {user}, Dirección de origen: {source_ip}"
 
     return "No se pudo extraer información del inicio de sesión"
+
+def get_windows_dc_login_observation(cuerpo):
+    """
+    Extrae información de los logs "Se ha detectado un inicio de sesión en los DC".
+
+    Args:
+        cuerpo (str): El cuerpo del log.
+
+    Returns:
+        str: Observación extraída o un mensaje de error.
+    """
+    pattern = r'Desde IP: (\d+\.\d+\.\d+\.\d+) Hacia Ip: (\d+\.\d+\.\d+\.\d+) Usuario: (.*?) Host: (.*?)$'
+    match = re.search(pattern, cuerpo, re.DOTALL)
+
+    if match:
+        ip_origen = match.group(1).strip()
+        ip_destino = match.group(2).strip()
+        user = match.group(3).strip()
+        host = match.group(4).strip()
+        return f"Inicio de sesión en DC - IP Origen: {ip_origen}, IP Destino: {ip_destino}, Usuario: {user}, Host: {host}"
+
+    return "No se pudo extraer información del inicio de sesión en los DC"
+
+
+def get_windows_user_login_observation(cuerpo):
+    """
+    Extrae información de los logs "Se ha detectado un inicio de sesión sin opr o admin".
+
+    Args:
+        cuerpo (str): El cuerpo del log.
+
+    Returns:
+        str: Observación extraída o un mensaje de error.
+    """
+    pattern = r'Desde IP: (\d+\.\d+\.\d+\.\d+) Hacia Ip: (\d+\.\d+\.\d+\.\d+) Usuario: (.*?) Host: (.*?)$'
+    match = re.search(pattern, cuerpo, re.DOTALL)
+
+    if match:
+        ip_origen = match.group(1).strip()
+        ip_destino = match.group(2).strip()
+        user = match.group(3).strip()
+        host = match.group(4).strip()
+        return f"Inicio de sesión sin opr/admin - IP Origen: {ip_origen}, IP Destino: {ip_destino}, Usuario: {user}, Host: {host}"
+
+    return "No se pudo extraer información del inicio de sesión sin opr o admin"
