@@ -12,26 +12,28 @@ def handle_abm_cases(alarma, cuerpo):
     Returns:
         tuple: Observación (str) y si el texto debe estar en negrita (bool).
     """
-    if alarma == "Notificacion SIEM - ABM-Grupo-AD-Agregado":
+    if alarma.strip() == "Notificacion SIEM - ABM-Grupo-AD-Agregado":
         observacion = get_abm_grupo_ad_agregado_observation(cuerpo)
         return observacion, True
 
-    if alarma == "Notificacion SIEM - ABM-Usuario-AD-Creado":
+    if alarma.strip() == "Notificacion SIEM - ABM-Usuario-AD-Creado":
         observacion = get_abm_usuario_ad_creado_observation(cuerpo)
         return observacion, True
 
-    if alarma == "Notificacion SIEM - ABM-Restablecimiento-Credenciales":
+    if alarma.strip() == "Notificacion SIEM - ABM-Restablecimiento-Credenciales":
         observacion = get_abm_restablecimiento_credenciales_observation(cuerpo)
         return observacion, True
-    if alarma == "Notificacion SIEM - ABM-Grupo-AD-Removido":
+
+    if alarma.strip() == "Notificacion SIEM - ABM-Grupo-AD-Removido":
         observacion = get_abm_grupo_ad_removido_observation(cuerpo)
         return observacion, True
-    
-    if alarma == "Notificacion SIEM - Notificacion SIEM - Pase a produccion detectado":
+
+    if alarma.strip() == "Notificacion SIEM - Notificacion SIEM - Pase a produccion detectado":
         observacion = get_pase_a_produccion_observation(cuerpo)
         return observacion, True
-
+    
     return "Caso ABM no clasificado - Añadir manualmente", False
+
 
 
 def handle_salto_lateral_dba(alarma, cuerpo):
@@ -73,6 +75,30 @@ def handle_pases_produccion(alarma, cuerpo):
 
     return "Caso de pase a producción no clasificado - Añadir manualmente", False
 
+def handle_cambio_gpo(alarma, cuerpo):
+    if alarma == "Notificacion SIEM - SIEM - Cambio de politicas GPO":
+        observacion = get_cambio_gpo_observation(cuerpo)
+        return observacion, True
+
+def get_cambio_gpo_observation(cuerpo):
+    """
+    Extrae información de los logs "Cambio de políticas GPO".
+
+    Args:
+        cuerpo (str): El cuerpo del log.
+
+    Returns:
+        str: Observación extraída en formato de una sola línea.
+    """
+    pattern = r'Usuario: (.*?) DC: (.*?) '
+    match = re.search(pattern, cuerpo, re.DOTALL)
+
+    if match:
+        usuario = match.group(1).strip()
+        dc = match.group(2).strip()
+        return f"Usuario: {usuario}, DC: {dc}"
+
+    return "No se pudo extraer información del log de Cambio de Políticas GPO"
 
 def get_abm_grupo_ad_agregado_observation(cuerpo):
     """
@@ -151,7 +177,13 @@ def get_abm_grupo_ad_removido_observation(cuerpo):
     Returns:
         str: Observación extraída en formato de una sola línea.
     """
-    pattern = "Usuario de origen: (.*?) Usuario de destino: (.*?) Grupo \(si corresponde\): (.*?) IP de origen: (\d+\.\d+\.\d+\.\d+)"
+    # Patrón ajustado para mayor robustez
+    pattern = (
+        r"Usuario de origen: (.*?) "
+        r"Usuario de destino: (.*?) "
+        r"Grupo \(si corresponde\): (.*?) "
+        r"IP de origen: (\d+\.\d+\.\d+\.\d+)"
+    )
     match = re.search(pattern, cuerpo, re.DOTALL)
 
     if match:
@@ -164,6 +196,7 @@ def get_abm_grupo_ad_removido_observation(cuerpo):
         return f"Usuario de origen: {user_origen}, Usuario de destino: {user_destino}, Grupo: {grupo}, IP de origen: {ip_origen}"
 
     return "No se pudo extraer información del log ABM-Grupo-AD-Removido"
+
 
 def get_pase_a_produccion_observation(cuerpo):
     """
