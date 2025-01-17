@@ -9,7 +9,7 @@ from siem_processor.utils.styles import apply_styles, is_critical_alarm
 from siem_processor.cases.windows_login import handle_windows_login
 from siem_processor.cases.linux_login import handle_linux_login
 from siem_processor.cases.general_cases import handle_general_case
-from siem_processor.cases.other_cases import handle_abm_cases, handle_salto_lateral_dba, handle_pases_produccion
+from siem_processor.cases.other_cases import handle_abm_cases, handle_salto_lateral_dba, handle_pases_produccion, handle_cambio_gpo
 #from siem_processor.modules.InfoGetterSIEM import fetch_user_info, get_user_details,extract_user_id
 from siem_processor.modules.IP2Location import process_alarm
 import pandas as pd
@@ -56,7 +56,7 @@ def process_alarms(input_file,bd_file):
             "Notificacion SIEM - VPN - Login desde 2 IPs diferentes",
             "Notificacion SIEM - Workapp - Login desde 2 IPs diferentes",
             "Notificacion SIEM - Workapp - Login fuera de ARG y PY",
-            "Notificacion SIEM - VPN fuera de ARG o PY."
+            "Notificacion SIEM - VPN fuera de ARG o PY"
         ]:
             # Usar IP2Location para procesar alarmas de viajes imposibles
             observacion = process_alarm(cuerpo)
@@ -64,8 +64,8 @@ def process_alarms(input_file,bd_file):
         elif alarma in [
             "Notificacion SIEM - ABM-Usuario-AD-Creado",
             "Notificacion SIEM - ABM-Restablecimiento-Credenciales",
-            "Notificacion SIEM - ABM-Grupo-AD-Agregado"
-
+            "Notificacion SIEM - ABM-Grupo-AD-Agregado",
+            "Notificacion SIEM - ABM-Grupo-AD-Removido"
         ]:
             observacion, is_bold = handle_abm_cases(alarma, cuerpo)
             is_bold = True if "Alerta" in observacion else False
@@ -77,8 +77,13 @@ def process_alarms(input_file,bd_file):
             is_bold = True if "Alerta" in observacion else False
         elif alarma in [
             "Notificacion SIEM - Notificacion SIEM - Pase a produccion detectado"
-        ]:
+        ]:  
             observacion, is_bold = handle_pases_produccion(alarma, cuerpo)
+            is_bold = True if "Alerta" in observacion else False
+        elif alarma in [
+            "Notificacion SIEM - SIEM - Cambio de politicas GPO"
+        ]:
+            observacion, is_bold = handle_cambio_gpo(alarma, cuerpo)
             is_bold = True if "Alerta" in observacion else False
         else:
             observacion, is_bold = handle_general_case(alarma, cuerpo)
