@@ -48,6 +48,7 @@ def test_single_log(alarma, cuerpo):
         "Notificacion SIEM - ABM-Usuario-AD-Creado",
         "Notificacion SIEM - ABM-Restablecimiento-Credenciales",
         "Notificacion SIEM - ABM-Grupo-AD-Agregado"
+        "Notificacion SIEM - ABM-Grupo-AD-Removido",
     ]:
         observacion, _ = handle_abm_cases(alarma, cuerpo)
         return observacion
@@ -80,11 +81,11 @@ def test_single_log(alarma, cuerpo):
 if __name__ == "__main__":
     # Variables de ejemplo para pruebas rápidas
     test_alarma = """
-    Notificacion SIEM - Se ha detectado un inicio de sesión
+    Notificacion SIEM - ABM-Grupo-AD-Removido
     """.strip()
 
     test_cuerpo = """
-    Alarm: Windows-Login-RDP  Se ha detectado un inicio de sesión en el equipo  Desde IP: 10.150.100.11 Hacia Ip: 10.150.12.250 Usuario: u996642_admin Host: msfs3
+    ABM-Grupo-AD-Removido   Fecha/hora: 2025/01/16 17:38:38 Usuario de origen: u993173_admin Usuario de destino: u990772 Grupo (si corresponde): prtcolor IP de origen: 10.129.4.177 IPAM: http://ipam.personal.com.py/index.php?page=tools&section=search&ip=10.129.4.177 --
     """.strip()
 
 
