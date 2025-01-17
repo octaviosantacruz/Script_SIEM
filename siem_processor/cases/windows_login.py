@@ -11,20 +11,25 @@ def handle_windows_login(alarma, cuerpo):
     Returns:
         tuple: Observación (str) y si el texto debe estar en negrita (bool).
     """
+    observacion = "Caso no clasificado - Añadir manualmente"  # Valor por defecto
+    is_bold = False
+
     if alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión":
         observacion = get_windows_login_observation(cuerpo)
         if observacion == "No se pudo extraer información del inicio de sesión":
             observacion = get_variant_windows_login_observation(cuerpo)
-        is_bold = True if observacion else False
+        is_bold = True if observacion != "No se pudo extraer información del inicio de sesión variante" else False
+
     elif alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión en los DC":
         observacion = get_windows_dc_login_observation(cuerpo)
-        is_bold = True if observacion else False
+        is_bold = True if observacion != "No se pudo extraer información del inicio de sesión en los DC" else False
+
     elif alarma == "Notificacion SIEM - Se ha detectado un inicio de sesión sin opr o admin":
         observacion = get_windows_user_login_observation(cuerpo)
-        is_bold = True if observacion else False
-        return observacion, is_bold
+        is_bold = True if observacion != "No se pudo extraer información del inicio de sesión sin opr o admin" else False
 
-    return "Caso no clasificado - Añadir manualmente", False
+    return observacion, is_bold
+
 
 def get_variant_windows_login_observation(cuerpo):
     """
@@ -36,9 +41,9 @@ def get_variant_windows_login_observation(cuerpo):
     Returns:
         str: Observación extraída o un mensaje de error.
     """
-    pattern = r'Alarm: Windows-Login-RDP.*?Desde IP: (\d+\.\d+\.\d+\.\d+).*?Hacia Ip: (\d+\.\d+\.\d+\.\d+).*?Usuario: (.*?) Host: (.*?)$'
-    match = re.search(pattern, cuerpo, re.DOTALL)
 
+    pattern = r'Alarm: Windows-Login-RDP.*?Desde IP: (\d+\.\d+\.\d+\.\d+).*?Hacia Ip: (\d+\.\d+\.\d+\.\d+).*?Usuario: (.*?) Host: (.*?)$'
+    match = re.search(pattern, cuerpo, re.DOTALL | re.IGNORECASE)
     if match:
         ip_origen = match.group(1).strip()
         ip_destino = match.group(2).strip()
@@ -47,6 +52,8 @@ def get_variant_windows_login_observation(cuerpo):
         return f"IP Origen: {ip_origen}, IP Destino: {ip_destino}, Usuario: {user}, Host: {host}"
 
     return "No se pudo extraer información del inicio de sesión variante"
+
+
 def get_windows_login_observation(cuerpo):
     """
     Extrae la información de los logs de Windows Login.
