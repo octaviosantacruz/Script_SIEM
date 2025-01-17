@@ -1,6 +1,6 @@
 # Handle ABM Alarmas and Salto Laterales de DBA
 import re
-from siem_processor.utils.styles import apply_styles as styles
+from siem_processor.utils.style_utils import apply_styles as styles
 def handle_abm_cases(alarma, cuerpo):
     """
     Maneja los casos de ABM (Usuarios y Grupos de Active Directory).
@@ -237,10 +237,7 @@ def get_salto_lateral_observation(cuerpo):
 
     if match:
         usuario = match.group(1).strip()
-        return f"Salto Lateral de Usuario DBA: {usuario}"
+        return f"Alerta: Salto Lateral detectado. Usuario DBA: {usuario}. Favor verificar actividad sospechosa."
     else:
-        not_match = "No se detectó un usuario DBA en el log de salto lateral"
-        not_match = styles(not_match, bold=True)
-
-    return not_match
+        return "No se detectó un usuario DBA en el log de salto lateral. Favor verificar manualmente."
 
