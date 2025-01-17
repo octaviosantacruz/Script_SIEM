@@ -141,8 +141,6 @@ def get_abm_restablecimiento_credenciales_observation(cuerpo):
 
     return "No se pudo extraer información del log ABM-Restablecimiento-Credenciales"
 
-import re
-
 def get_abm_grupo_ad_removido_observation(cuerpo):
     """
     Extrae información de los logs "ABM-Grupo-AD-Removido".
