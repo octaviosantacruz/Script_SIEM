@@ -1,3 +1,6 @@
+"""
+style_utils.py | Módulo con funciones para aplicar estilos a celdas de Excel.
+"""
 import pandas as pd
 from openpyxl.styles import Font, PatternFill
 
@@ -37,7 +40,7 @@ def apply_styles(sheet, row_index, is_critical=False, is_bold=False):
     """
     cell = sheet.cell(row=row_index + 2, column=2)  # Columna fija (índice 2)
     if is_critical:
-        cell.font = Font(bold=True, color="FFFFFF")  # Texto en blanco
+        cell.font = Font(bold=True, color="000000")  # Texto en negrita
         cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Fondo rojo
     elif is_bold:
         cell.font = Font(bold=True)
