@@ -23,6 +23,9 @@ def handle_abm_cases(alarma, cuerpo):
     if alarma == "Notificacion SIEM - ABM-Restablecimiento-Credenciales":
         observacion = get_abm_restablecimiento_credenciales_observation(cuerpo)
         return observacion, True
+    if alarma == "Notificacion SIEM - ABM-Grupo-AD-Removido":
+        observacion = get_abm_grupo_ad_removido_observation(cuerpo)
+        return observacion, True
     
     if alarma == "Notificacion SIEM - Notificacion SIEM - Pase a produccion detectado":
         observacion = get_pase_a_produccion_observation(cuerpo)
@@ -138,6 +141,31 @@ def get_abm_restablecimiento_credenciales_observation(cuerpo):
 
     return "No se pudo extraer información del log ABM-Restablecimiento-Credenciales"
 
+import re
+
+def get_abm_grupo_ad_removido_observation(cuerpo):
+    """
+    Extrae información de los logs "ABM-Grupo-AD-Removido".
+
+    Args:
+        cuerpo (str): El cuerpo del log.
+
+    Returns:
+        str: Observación extraída en formato de una sola línea.
+    """
+    pattern = "Usuario de origen: (.*?) Usuario de destino: (.*?) Grupo \(si corresponde\): (.*?) IP de origen: (\d+\.\d+\.\d+\.\d+)"
+    match = re.search(pattern, cuerpo, re.DOTALL)
+
+    if match:
+        user_origen = match.group(1).strip()
+        user_destino = match.group(2).strip()
+        grupo = match.group(3).strip() or "No especificado"
+        ip_origen = match.group(4).strip()
+
+        # Devolver observación en una sola línea
+        return f"Usuario de origen: {user_origen}, Usuario de destino: {user_destino}, Grupo: {grupo}, IP de origen: {ip_origen}"
+
+    return "No se pudo extraer información del log ABM-Grupo-AD-Removido"
 
 def get_pase_a_produccion_observation(cuerpo):
     """
