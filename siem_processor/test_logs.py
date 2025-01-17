@@ -8,7 +8,8 @@ from siem_processor.cases.linux_login import handle_linux_login
 from siem_processor.cases.other_cases import (
     handle_abm_cases,
     handle_salto_lateral_dba,
-    handle_pases_produccion
+    handle_pases_produccion,
+    handle_cambio_gpo
 )
 from siem_processor.modules.IP2Location import process_alarm
 
@@ -47,7 +48,7 @@ def test_single_log(alarma, cuerpo):
     elif alarma in [
         "Notificacion SIEM - ABM-Usuario-AD-Creado",
         "Notificacion SIEM - ABM-Restablecimiento-Credenciales",
-        "Notificacion SIEM - ABM-Grupo-AD-Agregado"
+        "Notificacion SIEM - ABM-Grupo-AD-Agregado",
         "Notificacion SIEM - ABM-Grupo-AD-Removido",
     ]:
         observacion, _ = handle_abm_cases(alarma, cuerpo)
@@ -74,6 +75,11 @@ def test_single_log(alarma, cuerpo):
     ]:
         observacion, _ = handle_pases_produccion(alarma, cuerpo)
         return observacion
+    elif alarma in [
+        "Notificacion SIEM - SIEM - Cambio de politicas GPO"
+    ]:
+        observacion, _ = handle_cambio_gpo(alarma, cuerpo)
+        return observacion
 
     return "Caso no clasificado - Verificar manualmente"
 
@@ -81,11 +87,11 @@ def test_single_log(alarma, cuerpo):
 if __name__ == "__main__":
     # Variables de ejemplo para pruebas rápidas
     test_alarma = """
-    Notificacion SIEM - ABM-Grupo-AD-Removido
+    Notificacion SIEM - SIEM - Cambio de politicas GPO
     """.strip()
 
     test_cuerpo = """
-    ABM-Grupo-AD-Removido   Fecha/hora: 2025/01/16 17:38:38 Usuario de origen: u993173_admin Usuario de destino: u990772 Grupo (si corresponde): prtcolor IP de origen: 10.129.4.177 IPAM: http://ipam.personal.com.py/index.php?page=tools&section=search&ip=10.129.4.177 --
+    Alarm: DCS-cambio-en-politica  Se ha detectado un cambio de las políticas GPO  Usuario: u991555_admin  DC: ASUSISV-MSDC2  Hora: 2025/01/16 16:47:02
     """.strip()
 
 
