@@ -237,7 +237,7 @@ def get_salto_lateral_observation(cuerpo):
 
     if match:
         usuario = match.group(1).strip()
-        return f"Alerta: Salto Lateral detectado. Usuario DBA: {usuario}. Favor verificar actividad sospechosa."
+        return f"Salto Lateral detectado. Usuario DBA: {usuario}."
     else:
         return "No se detectó un usuario DBA en el log de salto lateral. Favor verificar manualmente."
 
