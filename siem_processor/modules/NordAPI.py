@@ -150,7 +150,7 @@ def process_vpn_outside_permitted_countries(log):
         return "Error: No se pudo extraer el país del log"
 
     if detected_country == log_country:
-        return f"Se verifica que el usuario reside en {detected_country}."
+        return f"Se verifica que el usuario se encuentra en {detected_country}."
     else:
         return f"Falso Positivo. El log indica {log_country}, pero la IP pertenece a {detected_country}."
 
