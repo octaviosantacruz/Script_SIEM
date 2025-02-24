@@ -11,7 +11,7 @@ from siem_processor.cases.other_cases import (
     handle_pases_produccion,
     handle_cambio_gpo
 )
-from siem_processor.modules.IP2Location import process_alarm
+from siem_processor.cases.IP2Location import process_alarm
 
 # --- Función para probar logs individuales ---
 def test_single_log(alarma, cuerpo):

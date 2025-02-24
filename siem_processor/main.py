@@ -6,10 +6,10 @@ from openpyxl import load_workbook
 from datetime import datetime
 from siem_processor.utils.normalization import normalize_database
 from siem_processor.utils.style_utils import apply_styles, is_critical_alarm
-from siem_processor.cases.windows_login import handle_windows_login
-from siem_processor.cases.linux_login import handle_linux_login
-from siem_processor.cases.general_cases import handle_general_case
-from siem_processor.cases.other_cases import handle_abm_cases, handle_salto_lateral_dba, handle_pases_produccion, handle_cambio_gpo
+from siem_processor.modules.windows_login import handle_windows_login
+from siem_processor.modules.linux_login import handle_linux_login
+from siem_processor.modules.general_cases import handle_general_case
+from siem_processor.modules.other_cases import handle_abm_cases, handle_salto_lateral_dba, handle_pases_produccion, handle_cambio_gpo
 #from siem_processor.modules.InfoGetterSIEM import fetch_user_info, get_user_details,extract_user_id
 from siem_processor.modules.IP2Location import process_alarm
 import pandas as pd
