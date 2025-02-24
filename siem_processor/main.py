@@ -11,7 +11,7 @@ from siem_processor.modules.linux_login import handle_linux_login
 from siem_processor.modules.general_cases import handle_general_case
 from siem_processor.modules.other_cases import handle_abm_cases, handle_salto_lateral_dba, handle_pases_produccion, handle_cambio_gpo
 #from siem_processor.modules.InfoGetterSIEM import fetch_user_info, get_user_details,extract_user_id
-from siem_processor.modules.IP2Location import process_alarm
+from siem_processor.modules.NordAPI import process_alarm
 import pandas as pd
 import os
 
