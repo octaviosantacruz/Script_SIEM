@@ -87,6 +87,15 @@ def process_alarm(log):
         return process_login_outside_permitted_countries(log)
     else:
         return "Error: Tipo de alerta no identificado en el log."
+# --- Extraer país del log ---
+def extract_country_from_log(log):
+    # Expresión regular para extraer el país desde la geolocalización en el log
+    country_regex = r"Geolocalizacion de origen: [\w\sáéíóúÁÉÍÓÚñÑ]+, [\w\sáéíóúÁÉÍÓÚñÑ]+, ([\w\s]+)(?:,|\s*\d+)"
+    match = re.search(country_regex, log)
+
+    if match:
+        return match.group(1).strip()  # Se devuelve el país sin espacios extras
+    return None
 
 # --- Función para procesar login desde dos IPs diferentes ---
 def process_multiple_ip_login(log):
