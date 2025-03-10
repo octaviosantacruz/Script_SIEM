@@ -41,15 +41,20 @@ def get_variant_windows_login_observation(cuerpo):
     Returns:
         str: Observación extraída o un mensaje de error.
     """
+    pattern = r'Desde IP:\s*(?P<ip_origen>(?:\d+\.\d+\.\d+\.\d+|::)?)\s*Hacia Ip:\s*(?P<ip_destino>\d+\.\d+\.\d+\.\d+)\s*Usuario:\s*(?P<user>\S+)\s*Host:\s*(?P<host>\S+)'
 
-    pattern = r'Alarm: Windows-Login-RDP.*?Desde IP: (\d+\.\d+\.\d+\.\d+).*?Hacia Ip: (\d+\.\d+\.\d+\.\d+).*?Usuario: (.*?) Host: (.*?)$'
     match = re.search(pattern, cuerpo, re.DOTALL | re.IGNORECASE)
     if match:
-        ip_origen = match.group(1).strip()
-        ip_destino = match.group(2).strip()
-        user = match.group(3).strip()
-        host = match.group(4).strip()
-        return f"IP Origen: {ip_origen}, IP Destino: {ip_destino}, Usuario: {user}, Host: {host}"
+        ip_origen = match.group("ip_origen").strip()
+        ip_destino = match.group("ip_destino").strip()
+        user = match.group("user").strip()
+        host = match.group("host").strip()
+
+        # Si la IP de origen es "::" o está vacía, la omitimos
+        if ip_origen == "::" or not ip_origen:
+            return f"Login Citrix -- IP Origen: {ip_destino}, Usuario: {user}, Host: {host}"
+        else:
+            return f"Login Citrix -- IP Origen: {ip_origen}, IP Destino: {ip_destino}, Usuario: {user}, Host: {host}"
 
     return "No se pudo extraer información del inicio de sesión variante"
 
