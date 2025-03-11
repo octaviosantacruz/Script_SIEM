@@ -31,6 +31,10 @@ def handle_abm_cases(alarma, cuerpo):
     if alarma.strip() == "Notificacion SIEM - Notificacion SIEM - Pase a produccion detectado":
         observacion = get_pase_a_produccion_observation(cuerpo)
         return observacion, True
+
+    if alarma.strip() == "Notificacion SIEM - Login con Clave Publica":
+        observacion = get_login_con_clave_publica_observation(cuerpo)
+        return observacion, True
     
     return "Caso ABM no clasificado - Añadir manualmente", False
 
@@ -241,3 +245,25 @@ def get_salto_lateral_observation(cuerpo):
     else:
         return "No se detectó un usuario DBA en el log de salto lateral. Favor verificar manualmente."
 
+
+def get_login_con_clave_publica_observation(cuerpo):
+    """
+    Extrae información de los logs "Login con Clave Pública".
+
+    Args:
+        cuerpo (str): El cuerpo del log.
+
+    Returns:
+        str: Observación extraída o un mensaje de error si la información no puede ser extraída.
+    """
+    pattern = r'Servidor:\s*(?P<servidor>\S+)\s*Ip Origen:\s*(?P<ip_origen>\d+\.\d+\.\d+\.\d+)\s*Usuario:\s*(?P<usuario>\S+)'
+    
+    match = re.search(pattern, cuerpo, re.DOTALL | re.IGNORECASE)
+    if match:
+        servidor = match.group("servidor").strip()
+        ip_origen = match.group("ip_origen").strip()
+        usuario = match.group("usuario").strip()
+
+        return f"Login con Clave Pública -- Servidor: {servidor}, IP Origen: {ip_origen}, Usuario: {usuario}"
+
+    return "No se pudo extraer información del log Login con Clave Pública"
