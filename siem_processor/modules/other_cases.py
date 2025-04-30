@@ -257,7 +257,7 @@ def get_login_con_clave_publica_observation(cuerpo):
         str: Observación extraída o un mensaje de error si la información no puede ser extraída.
     """
     pattern = r'Servidor:\s*(?P<servidor>\S+)\s*Ip Origen:\s*(?P<ip_origen>\d+\.\d+\.\d+\.\d+)\s*Usuario:\s*(?P<usuario>\S+)'
-    
+
     match = re.search(pattern, cuerpo, re.DOTALL | re.IGNORECASE)
     if match:
         servidor = match.group("servidor").strip()
