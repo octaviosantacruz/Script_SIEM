@@ -65,7 +65,8 @@ def process_alarms(input_file,bd_file):
             "Notificacion SIEM - ABM-Usuario-AD-Creado",
             "Notificacion SIEM - ABM-Restablecimiento-Credenciales",
             "Notificacion SIEM - ABM-Grupo-AD-Agregado",
-            "Notificacion SIEM - ABM-Grupo-AD-Removido"
+            "Notificacion SIEM - ABM-Grupo-AD-Removido",
+            "Notificacion SIEM - Login con Clave Publica"
         ]:
             observacion, is_bold = handle_abm_cases(alarma, cuerpo)
             is_bold = True if "Alerta" in observacion else False
